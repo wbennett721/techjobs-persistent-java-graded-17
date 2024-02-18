@@ -11,7 +11,6 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -31,26 +30,27 @@ public class HomeController {
     }
 
     @GetMapping("add")
-    public String displayAddJobForm(Model model) {
+    public void displayAddJobForm(Model model) {
 	model.addAttribute("title", "Add Job");
     model.addAttribute("employers", employerRepository.findAll());
         model.addAttribute(new Job());
-        return "add";
     }
 
     @PostMapping("add")
     public String processAddJobForm(@ModelAttribute @Valid Job newJob,
                                        Errors errors, Model model, @RequestParam int employerId) {
-        model.addAttribute("employers", employerRepository.findAll());
+
+
 
         if (errors.hasErrors()) {
 	    model.addAttribute("title", "Add Job");
 
             return "add";
-        }else {
-            Optional<Employer> result = employerRepository.findById(employerId);
 
         }
+        Employer employer = employerRepository.findById(employerId).orElse(new Employer());
+
+        newJob.setEmployer(employer);
 
         return "redirect:";
     }
