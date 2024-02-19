@@ -12,7 +12,7 @@ public class Job extends AbstractEntity {
 
 
     //private String name;
-     @OneToMany
+    @ManyToOne()
     private Employer employer;
 
      @ManyToMany(mappedBy="skills")
