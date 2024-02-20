@@ -29,7 +29,7 @@ public class SkillController {
     public String displayAddSkillForm(Model model) {
         //model.addAttribute("skill", "Add Skill");
         model.addAttribute(new Skill());
-        return "skills/index";
+        return "skills/add";
     }
 
     @PostMapping("add")

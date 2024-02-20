@@ -26,8 +26,10 @@ public class HomeController {
     @Autowired
     private EmployerRepository employerRepository;
 
+    @Autowired
     private SkillRepository skillRepository;
 
+    @Autowired
     private JobRepository jobRepository;
 
     @RequestMapping("/")
@@ -39,13 +41,16 @@ public class HomeController {
     }
 
     @GetMapping("add")
-    public void displayAddJobForm(Model model) {
+    public String displayAddJobForm(Model model) {
         model.addAttribute("title", "Add Job");
         model.addAttribute("employers", employerRepository.findAll());
         model.addAttribute("skills", skillRepository.findAll());
         model.addAttribute(new Job());
+
+        return "add";
     }
 
+        ;
     @PostMapping("add")
     public String processAddJobForm(@ModelAttribute @Valid Job newJob,
                                     Errors errors, Model model, @RequestParam int employerId, @RequestParam List<Integer> skills) {
@@ -55,14 +60,22 @@ public class HomeController {
 
             return "add";
         }
-        Employer employer = employerRepository.findById(employerId).orElse(new Employer());
+        //Employer employer = employerRepository.findById(employerId).orElse(new Employer());
 
-        newJob.setEmployer(employer);
+        Optional<Employer> result = employerRepository.findById(employerId);
+        if (result.isEmpty() == false) {
+            Employer employer = result.get();
+
+            newJob.setEmployer(employer);
+
+        }
+
+
 
 
         List<Skill> skillObjs = (List<Skill>) skillRepository.findAllById(skills);
 
-        newJob.setSkills((Skill) skillObjs);
+        newJob.setSkills(skillObjs);
 
         jobRepository.save(newJob);
 
@@ -71,8 +84,14 @@ public class HomeController {
 
     @GetMapping("view/{jobId}")
     public String displayViewJob(Model model, @PathVariable int jobId) {
-        model.addAttribute("employer", employerRepository);
-        model.addAttribute("skills", skillRepository);
+        //model.addAttribute("job", jobRepository);
+        //model.addAttribute("skills", skillRepository);
+
+        Optional<Job> result = jobRepository.findById(jobId);
+        if (result.isEmpty() == false) {
+            Job job = result.get();
+            model.addAttribute("job", job);
+        }
 
 
 
